@@ -18,6 +18,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
@@ -32,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String IP = UserLogin.getInstance().getIp();
     private static final String PORT = UserLogin.getInstance().getPort();
-    private static final String username = UserLogin.getInstance().getUsername();
+    private static final String username = UserLogin.getInstance().getUsername() ;
     private static final String password = UserLogin.getInstance().getPassword();
     DataBaseHandler db = new DataBaseHandler(this);
     public static final String READ_HUMIDADE_TEMPERATURA = "http://" + IP + ":" + PORT + "/getHumidade_Temperatura.php";
@@ -52,15 +57,15 @@ public class MainActivity extends AppCompatActivity {
         params.put("password", password);
         params.put("idCultura", "1");
         ConnectionHelper jParser = new ConnectionHelper();
-        try{
-            JSONArray test = jParser.execute(params).get();
-            Log.d("connection", ""+test.toString());
-        }catch(InterruptedException | ExecutionException e ){
+        JSONArray jsonOutput = null;
+        try {
+            jsonOutput = jParser.execute(params).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-
-
+        Log.d("testing json output", jsonOutput.toString());
 
     }
 
@@ -142,11 +147,22 @@ public class MainActivity extends AppCompatActivity {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             HashMap<String, String> params = new HashMap<>();
+            params.put("url", READ_HUMIDADE_TEMPERATURA);
             params.put("username", username);
             params.put("password", password);
             params.put("idCultura", idCultura);
-            ConnectionHandler jParser = new ConnectionHandler();
-            JSONArray jsonHumidadeTemperatura = jParser.getJSONFromUrl(READ_HUMIDADE_TEMPERATURA, params);
+            ConnectionHelper jParser = new ConnectionHelper();
+            JSONArray jsonHumidadeTemperatura = null;
+            try {
+                jsonHumidadeTemperatura = jParser.execute(params).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+
+
             db.dbClear();
             if (jsonHumidadeTemperatura != null) {
                 for (int i = 0; i < jsonHumidadeTemperatura.length(); i++) {
@@ -161,7 +177,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            JSONArray jsonAlertas = jParser.getJSONFromUrl(READ_ALERTAS, params);
+            params.remove("url");
+            params.put("url", READ_ALERTAS);
+            JSONArray jsonAlertas = null;
+            try {
+                jsonAlertas = jParser.execute(params).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
             if (jsonAlertas != null) {
                 for (int i = 0; i < jsonAlertas.length(); i++) {
                     JSONObject c = jsonAlertas.getJSONObject(i);
@@ -176,7 +201,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
-            JSONArray jsonCultura = jParser.getJSONFromUrl(READ_Cultura, params);
+            params.remove("url");
+            params.put("url", READ_Cultura);
+            JSONArray jsonCultura = null;
+            try {
+                jsonCultura = jParser.execute(params).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
             if (jsonCultura != null) {
                 for (int i = 0; i < jsonCultura.length(); i++) {
                     JSONObject c = jsonCultura.getJSONObject(i);
