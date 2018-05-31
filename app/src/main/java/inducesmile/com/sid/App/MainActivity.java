@@ -3,6 +3,7 @@ package inducesmile.com.sid.App;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,8 +19,10 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 import inducesmile.com.sid.Connection.ConnectionHandler;
+import inducesmile.com.sid.Connection.ConnectionHelper;
 import inducesmile.com.sid.DataBase.DataBaseHandler;
 import inducesmile.com.sid.DataBase.DataBaseReader;
 import inducesmile.com.sid.Helper.UserLogin;
@@ -39,11 +42,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_graphic);
         db.dbClear();
+        drawGraph();
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("url", READ_HUMIDADE_TEMPERATURA);
+        params.put("username", username);
+        params.put("password", password);
+        params.put("idCultura", "1");
+        ConnectionHelper jParser = new ConnectionHelper();
+        try{
+            JSONArray test = jParser.execute(params).get();
+            Log.d("connection", ""+test.toString());
+        }catch(InterruptedException | ExecutionException e ){
+            e.printStackTrace();
+        }
+
+
+
+
     }
 
-    public void drawGraph(View v) {
+    public void drawGraph() {
         Intent i = new Intent(this, GraphicActivity.class);
         startActivity(i);
 
