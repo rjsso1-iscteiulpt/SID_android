@@ -37,9 +37,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String IP = UserLogin.getInstance().getIp();
     private static final String PORT = UserLogin.getInstance().getPort();
-    private static final String username = UserLogin.getInstance().getUsername() ;
+    private static final String username = UserLogin.getInstance().getUsername();
     private static final String password = UserLogin.getInstance().getPassword();
     DataBaseHandler db = new DataBaseHandler(this);
+    public static final String LOG_IN = "http://" + IP + ":" + PORT + "/login.php";
     public static final String READ_HUMIDADE_TEMPERATURA = "http://" + IP + ":" + PORT + "/getHumidade_Temperatura.php";
     public static final String READ_ALERTAS = "http://" + IP + ":" + PORT + "/getAlertas.php";
     public static final String READ_Cultura = "http://" + IP + ":" + PORT + "/getCultura.php";
@@ -47,29 +48,39 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_graphic);
-        db.dbClear();
-        drawGraph();
 
         HashMap<String, String> params = new HashMap<>();
-        params.put("url", READ_HUMIDADE_TEMPERATURA);
+        params.put("url", LOG_IN);
         params.put("username", username);
         params.put("password", password);
-        params.put("idCultura", "1");
         ConnectionHelper jParser = new ConnectionHelper();
-        JSONArray jsonOutput = null;
+        JSONArray jsonLogin = null;
         try {
-            jsonOutput = jParser.execute(params).get();
+            jsonLogin = jParser.execute(params).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        Log.d("testing json output", jsonOutput.toString());
 
+        JSONObject c = null;
+        int code = 0;
+        try {
+            c = jsonLogin.getJSONObject(0);
+            code = c.getInt("code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (code == 1) {
+            setContentView(R.layout.activity_main);
+        } else {
+            setContentView(R.layout.activity_login);
+        }
+        db.dbClear();
     }
 
-    public void drawGraph() {
+    public void drawGraph(View v) {
         Intent i = new Intent(this, GraphicActivity.class);
         startActivity(i);
 
@@ -160,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-
 
 
             db.dbClear();
