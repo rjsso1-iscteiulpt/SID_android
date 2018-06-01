@@ -36,8 +36,8 @@ import inducesmile.com.sid.R;
 public class MainActivity extends AppCompatActivity {
 
     private static final String IP = UserLogin.getInstance().getIp();
-    private static final String PORT = UserLogin.getInstance().getPort();
     private static final String username = UserLogin.getInstance().getUsername();
+    private static final String PORT = UserLogin.getInstance().getPort();
     private static final String password = UserLogin.getInstance().getPassword();
     DataBaseHandler db = new DataBaseHandler(this);
     public static final String LOG_IN = "http://" + IP + ":" + PORT + "/login.php";
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             idCultura.onEditorAction(EditorInfo.IME_ACTION_DONE);
             updateNomeCultura();
             updateNumeroMedicoes();
-            updateNumeroAlertas();
+//            updateNumeroAlertas();
 
         }
     }
@@ -182,16 +182,16 @@ public class MainActivity extends AppCompatActivity {
                     double valorMedicaoTemperatura = c.getDouble("ValorMedicaoTemperatura");
                     double valorMedicaoHumidade = c.getDouble("ValorMedicaoHumidade");
                     String dataMedicao = c.getString("DataMedicao");
-                    int idCultura2 = c.getInt("IDCultura");
-                    db.insert_Humidade_Temperatura(idMedicao, idCultura2, horaMedicao, valorMedicaoTemperatura, valorMedicaoHumidade, dataMedicao);
+                    db.insert_Humidade_Temperatura(idMedicao, Integer.parseInt(idCultura), horaMedicao, valorMedicaoTemperatura, valorMedicaoHumidade, dataMedicao);
                 }
             }
 
             params.remove("url");
             params.put("url", READ_ALERTAS);
             JSONArray jsonAlertas = null;
+            ConnectionHelper jParser3 = new ConnectionHelper();
             try {
-                jsonAlertas = jParser.execute(params).get();
+                jsonAlertas = jParser3.execute(params).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -214,8 +214,9 @@ public class MainActivity extends AppCompatActivity {
             params.remove("url");
             params.put("url", READ_Cultura);
             JSONArray jsonCultura = null;
+            ConnectionHelper jParser2 = new ConnectionHelper();
             try {
-                jsonCultura = jParser.execute(params).get();
+                jsonCultura = jParser2.execute(params).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
