@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import inducesmile.com.sid.Connection.ConnectionHandler;
-import inducesmile.com.sid.Connection.ConnectionHelper;
 import inducesmile.com.sid.DataBase.DataBaseHandler;
 import inducesmile.com.sid.DataBase.DataBaseReader;
 import inducesmile.com.sid.Helper.UserLogin;
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             idCultura.onEditorAction(EditorInfo.IME_ACTION_DONE);
             updateNomeCultura();
             updateNumeroMedicoes();
-//            updateNumeroAlertas();
+            updateNumeroAlertas();
 
         }
     }
@@ -189,9 +188,9 @@ public class MainActivity extends AppCompatActivity {
             params.remove("url");
             params.put("url", READ_ALERTAS);
             JSONArray jsonAlertas = null;
-            ConnectionHelper jParser3 = new ConnectionHelper();
+            jParser = new ConnectionHelper();
             try {
-                jsonAlertas = jParser3.execute(params).get();
+                jsonAlertas = jParser.execute(params).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -214,9 +213,9 @@ public class MainActivity extends AppCompatActivity {
             params.remove("url");
             params.put("url", READ_Cultura);
             JSONArray jsonCultura = null;
-            ConnectionHelper jParser2 = new ConnectionHelper();
+            jParser = new ConnectionHelper();
             try {
-                jsonCultura = jParser2.execute(params).get();
+                jsonCultura = jParser.execute(params).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -234,6 +233,22 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private class ConnectionHelper extends AsyncTask<HashMap<String, String>, Void, JSONArray> {
+
+
+        protected JSONArray doInBackground(HashMap<String, String>... params ) {
+
+            ConnectionHandler jParser = new ConnectionHandler();
+            String url = params[0].get("url");
+            params[0].remove("url");
+            JSONArray jsonOutput = jParser.getJSONFromUrl(url, params[0]);
+            return jsonOutput;
+        }
+
+
+
     }
 
 }
