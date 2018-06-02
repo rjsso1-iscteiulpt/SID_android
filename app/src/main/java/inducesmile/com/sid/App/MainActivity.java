@@ -16,13 +16,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
@@ -205,7 +199,8 @@ public class MainActivity extends AppCompatActivity {
                     String horaMedicao = c.getString("HoraMedicao");
                     String nomeVariavel = c.getString("NomeVariavel");
                     String alerta = c.getString("Alerta");
-                    db.insert_Alertas(IDAlerta, dataMedicao, valorMedicao, horaMedicao, nomeVariavel, alerta);
+                    String tipo = c.getString("Tipo");
+                    db.insert_Alertas(IDAlerta, dataMedicao, valorMedicao, horaMedicao, nomeVariavel, alerta,tipo);
                 }
 
             }
